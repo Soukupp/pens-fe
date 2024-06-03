@@ -15,14 +15,18 @@
                     <button @click="addSort(index1)" :disabled="group.sortValues.length >= 4" class="new-sort-button">+ 新增指标</button>
                 </div>
                 <el-button @click="addGroup">新增对照组</el-button>
+                <el-button @click="Visualization.methods.getData()">确认</el-button>
             </div>
         </div>
-        <div class="container"></div>
+        <div class="container">
+            <Visualization />
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
+import Visualization from "./Visualization.vue"
 
 // 初始选项数据
 const sortType = [
