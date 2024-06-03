@@ -31,6 +31,7 @@ declare module '@vue/runtime-core' {
     ElProgress: typeof import('element-plus/es')['ElProgress']
     ElRow: typeof import('element-plus/es')['ElRow']
     ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
+    ElSelct: typeof import('element-plus/es')['ElSelct']
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElSelection: typeof import('element-plus/es')['ElSelection']
     ElSubMenu: typeof import('element-plus/es')['ElSubMenu']
