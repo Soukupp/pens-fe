@@ -19,7 +19,7 @@
             </div>
         </div>
         <div class="container">
-            <Visualization />
+            <Visualization></Visualization>
         </div>
     </div>
 </template>
@@ -83,6 +83,11 @@ const getSecondOptions = (type: string) => {
 const updateOptions = (groupIndex: number) => {
     dataGroup[groupIndex].sortValues.push(dataGroup[groupIndex].sortValues.pop() as SortValue);
 };
+
+const message = reactive({
+    newsTitle:"all",
+
+})
 </script>
 
 <style scoped>
