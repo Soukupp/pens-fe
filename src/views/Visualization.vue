@@ -2,7 +2,7 @@
     <h>图表展示</h>
     <div style="display: flex">
         <div id="main" style="width: 70%;height: 500px"></div>
-        <div id="pieC" style="width: 20%;height: 500px"></div>
+        <div id="pieC" style="width: 30%;height: 500px"></div>
     </div>
 
 </template>
