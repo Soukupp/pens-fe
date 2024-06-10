@@ -5,28 +5,37 @@
                 <div v-for="(group, index1) in dataGroup" :key="index1" class="group-container">
                     <span>{{ '对照组' + (index1 + 1) }}</span>
                     <div v-for="(value, index2) in group.sortValues" :key="index2" class="select-container">
-                        <el-select v-model="group.sortValues[index2].type" placeholder="请选择指标" @change="updateOptions(index1)">
-                            <el-option v-for="option in getAvailableOptions(index1, index2)" :key="option.value" :label="option.text" :value="option.value"></el-option>
+                        <el-select v-model="group.sortValues[index2].type" placeholder="请选择指标"
+                            @change="updateOptions(index1)">
+                            <el-option v-for="option in getAvailableOptions(index1, index2)" :key="option.value"
+                                :label="option.text" :value="option.value"></el-option>
                         </el-select>
-                        <el-select v-model="group.sortValues[index2].value" placeholder="请选择值" :disabled="!group.sortValues[index2].type">
-                            <el-option v-for="option in getSecondOptions(group.sortValues[index2].type)" :key="option" :label="option" :value="option"></el-option>
+                        <el-select multiple v-model="group.sortValues[index2].value" placeholder="请选择值"
+                            :disabled="!group.sortValues[index2].type">
+                            <el-option v-for="option in getSecondOptions(group.sortValues[index2].type)" :key="option"
+                                :label="option" :value="option"></el-option>
                         </el-select>
                     </div>
-                    <button @click="addSort(index1)" :disabled="group.sortValues.length >= 4" class="new-sort-button">+ 新增指标</button>
+                    <button @click="addSort(index1)" :disabled="group.sortValues.length >= 4" class="new-sort-button">+
+                        新增指标</button>
                 </div>
                 <el-button @click="addGroup">新增对照组</el-button>
-                <el-button @click="Visualization.methods.getData()">确认</el-button>
+                <el-button @click="handleQueryEvent">查询</el-button>
             </div>
         </div>
         <div class="container">
-            <Visualization></Visualization>
+            <el-date-picker v-model="dateData" type="datetimerange" range-separator="到" start-placeholder="开始日期"
+                end-placeholder="截止日期" />
+            <Visualization :input-data="params" ></Visualization>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
-import Visualization from "./Visualization.vue"
+import { ref, reactive, defineProps } from 'vue';
+import Visualization from "./VisualizationPage.vue";
+import { DataGroup, Params } from '../assets/interface';
+import { ElMessage } from 'element-plus';
 
 // 初始选项数据
 const sortType = [
@@ -35,7 +44,7 @@ const sortType = [
     { value: 'title_length', text: '新闻标题长度' },
     { value: 'news_theme', text: '新闻类型' }
 ];
-
+// mock
 const optionData = [
     { option: 'user_ID', data: [101, 202, 303] },
     { option: 'news_length', data: [1000, 2000, 3000] },
@@ -43,7 +52,7 @@ const optionData = [
     { option: 'news_theme', data: ['体育类', '政治类', '生活类'] }
 ];
 
-interface SortValue {
+export interface SortValue {
     type: string;
     value: any;
 }
@@ -52,8 +61,55 @@ interface Group {
     sortValues: SortValue[];
 }
 
-// 初始化数据
+const dateData = ref<Array<Date>>([]);
+const params = ref<Params>();
+
+// model，负责绑定页面选择器
 const dataGroup = reactive<Array<Group>>([{ sortValues: [{ type: '', value: null }] }]);
+
+/** 加工并生成传给组件的params数据 */
+const handleQueryEvent = () => {
+    if(dateData.value.length <2){
+        ElMessage({
+            type: 'error',
+            message: '请选择时间范围'
+        });
+        return;
+    }
+
+    const inputData: Params = {
+        start_time: dateData.value[0].toISOString(),
+        end_time: dateData.value[1].toISOString(),
+        group: []
+    };
+
+    for(const item of dataGroup){
+        const temp= {} as DataGroup;
+        const sorts = item.sortValues;
+        for(const sort of sorts){
+            switch (sort.type) {
+                case 'news_theme':
+                    temp.news_theme = Array.from(sort.value);
+                    break;
+                case 'title_length':
+                    temp.title_length =Array.from(sort.value);
+                    break;
+                case 'news_length':
+                    temp.news_length = Array.from(sort.value);
+                    break;
+                case 'user_ID':
+                    temp.user_id = Array.from(sort.value);
+                    break;
+                default:
+                    break;
+            }
+        }
+        inputData.group.push(temp);
+    }
+    params.value = inputData;
+}
+
+
 
 // 处理添加新对照组的函数
 const addGroup = () => {
@@ -84,10 +140,6 @@ const updateOptions = (groupIndex: number) => {
     dataGroup[groupIndex].sortValues.push(dataGroup[groupIndex].sortValues.pop() as SortValue);
 };
 
-const message = reactive({
-    newsTitle:"all",
-
-})
 </script>
 
 <style scoped>
@@ -107,23 +159,23 @@ const message = reactive({
     margin-bottom: 20px;
 }
 
-.select-container{
+.select-container {
     margin-top: 10px;
-    margin-bottom:10px;
+    margin-bottom: 10px;
     display: flex;
-    gap:10px;
+    gap: 10px;
 }
 
-.new-sort-button{
+.new-sort-button {
     border-radius: 10px;
     padding: 5px 10px;
-    font-size:11px;
+    font-size: 11px;
     background-color: #f6f8fa;
-    color:rgb(100, 100, 100);
+    color: rgb(100, 100, 100);
     border-width: 0;
 }
 
-.new-sort-button:hover{
+.new-sort-button:hover {
     background-color: #d9d9d9;
     cursor: pointer;
     transition: 300ms;
