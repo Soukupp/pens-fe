@@ -30,10 +30,25 @@ const responseData = ref({
     ],
 });
 
-/** 接收父组件props，使用时直接props.inputData即可，inputData包含需要传给 后端的所有数据。父组件修改props自动触发子组件重新渲染 */
+/** 接收父组件props，使用时直接props.inputData即可，inputData包含需要传给后端的所有数据。父组件修改props自动触发子组件重新渲染 */
 const props = defineProps<{
     inputData: Params | undefined
 }>();
+
+function getData(){
+    // 调用接口，向后端传递参数、获取数据
+    axios.get("http://127.0.0.1:4523/m1/4594184-0-default/api/getNewsData",{
+        params:{
+            props
+        }
+    }).then(response => {
+        response = response.data.response
+        console.log("获取新闻数据接口的响应为：",response)
+
+    }).catch(err => {
+        console.log("在获取新闻数据使出错："+err)
+    })
+};
 
 const drawPieChart = () => {
     const pieChart = echarts.init(document.getElementById('pieC') as HTMLElement);
@@ -196,6 +211,7 @@ onMounted(() => {
 
 onUpdated(() => {
     console.log('***', props.inputData)
+    getData()
 });
 
 </script>
