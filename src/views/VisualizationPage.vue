@@ -1,19 +1,19 @@
 <template>
     <h1>图表展示</h1>
     <div style="display: flex">
-        <div id="main" style="width: 70%; height: 500px"></div>
-        <div id="pieC" style="width: 30%; height: 500px"></div>
+        <div id="main" style="width: 80%; height: 500px"></div>
+        <div id="pieC" style="width: 20%; height: 500px"></div>
     </div>
 </template>
 
 <script setup lang="ts">
 import * as echarts from 'echarts';
 import { ref, onMounted, defineProps, onUpdated } from 'vue';
-import axios from 'axios';
-import { Params } from '../assets/interface';
+import axios, { AxiosResponse } from 'axios';
+import {Params} from '../assets/interface';
 
 const option = ref({});
-const responseData = ref({
+interface responseData{
     group: [
         {
             newsTheme: 'all',
@@ -28,25 +28,26 @@ const responseData = ref({
             ],
         },
     ],
-});
+};
 
 /** 接收父组件props，使用时直接props.inputData即可，inputData包含需要传给后端的所有数据。父组件修改props自动触发子组件重新渲染 */
 const props = defineProps<{
     inputData: Params | undefined
 }>();
 
-function getData(){
+function getData() {
     // 调用接口，向后端传递参数、获取数据
-    axios.get("http://127.0.0.1:4523/m1/4594184-0-default/api/getNewsData",{
-        params:{
+    axios.get("http://127.0.0.1:4523/m1/4594184-0-default/api/getNewsData", {
+        params: {
             props
         }
     }).then(response => {
-        response = response.data.response
-        console.log("获取新闻数据接口的响应为：",response)
-
+        const response1 = response.data.response
+        console.log("获取新闻数据接口的响应为：", response1)
+        console.log("response的类型为：",typeof response1)
+        setOptions(response1)
     }).catch(err => {
-        console.log("在获取新闻数据使出错："+err)
+        console.log("在获取新闻数据使出错：" + err)
     })
 };
 
@@ -86,11 +87,11 @@ const drawPieChart = () => {
                     show: false,
                 },
                 data: [
-                    { value: 1048, name: 'Search Engine' },
-                    { value: 735, name: 'Direct' },
-                    { value: 580, name: 'Email' },
-                    { value: 484, name: 'Union Ads' },
-                    { value: 300, name: 'Video Ads' },
+                    {value: 1048, name: 'Search Engine'},
+                    {value: 735, name: 'Direct'},
+                    {value: 580, name: 'Email'},
+                    {value: 484, name: 'Union Ads'},
+                    {value: 300, name: 'Video Ads'},
                 ],
             },
         ],
@@ -98,8 +99,27 @@ const drawPieChart = () => {
     pieChart.setOption(option);
 };
 
-const setOptions = () => {
-    console.log('111');
+const setOptions = (resData : responseData) => {
+    console.log('111',resData);
+    if(!resData || !resData.group){
+        console.log("resData或resData.group为null！出错默认结束操作")
+        return;
+    }
+
+    // 准备图表数据
+    const seriresData = resData.group.map((series) => {
+        return{
+            name:"新闻主题为：" + series.newsTheme + ",新闻标题长度为：" + series.titleLength + "新闻内容长度为：" + series.newsLength + "用户人群为：" + series.userID,
+            type:'line',
+            emphasis: {
+                focus: 'series'
+            },
+            data:series.data.map(dataItem => [new
+            Date(dataItem.time).getTime(),dataItem.hit])
+        };
+    });
+    console.log("seriesData为:",seriresData)
+
     const myChart = echarts.init(document.getElementById('main') as HTMLElement);
     const data = [
         ['2000-06-05', 116],
@@ -163,6 +183,8 @@ const setOptions = () => {
                 seriesIndex: 0,
                 min: 0,
                 max: 400,
+                //top:50,
+                //right:10,
             },
         ],
         title: [
@@ -173,13 +195,21 @@ const setOptions = () => {
         ],
         tooltip: {
             trigger: 'axis',
+
+        },
+        legend:{
+            bottom:10,
         },
         xAxis: [
             {
-                data: dateList,
+                //data: dateList,
+                type:'time',
+                data:resData.group.flat().map((item => item.data.map(dataItem => dataItem.time)))
             },
         ],
-        yAxis: [{}],
+        yAxis: [{
+            type:'value'
+        }],
         grid: [
             {
                 bottom: '10%',
@@ -193,19 +223,21 @@ const setOptions = () => {
                 },
             },
         },
-        series: [
-            {
-                type: 'line',
-                showSymbol: false,
-                data: valueList,
-            },
-        ],
+        series:seriresData
+        //series: [
+        //    {
+                //type: 'line',
+                //showSymbol: false,
+                //data: valueList,
+
+        //    },
+        //],
     };
     myChart.setOption(option.value);
 };
 
 onMounted(() => {
-    setOptions();
+    //setOptions();
     drawPieChart();
 });
 
