@@ -1,7 +1,15 @@
 <template>
     <div style="display: flex">
         <div id="main" style="width: 80%; height: 500px"></div>
-        <div id="pieC" style="width: 20%; height: 500px"></div>
+        <!-- 添加一个容器用于饼状图 -->
+        <div style="width: 20%; height: 400px; position: relative;">
+            <!-- 饼状图将在这个容器内 -->
+            <div id="pieC" style="height: 400px"></div>
+            <!-- 添加文本在饼状图下方 -->
+            <div class="pieChartText">
+                注：Group与左边图例一致
+            </div>
+        </div>
     </div>
 </template>
 
@@ -92,13 +100,13 @@ const drawPieChart = (resData : responseData) => {
                     show: false,
                     position: 'center',
                 },
-                emphasis: {
-                    label: {
-                        show: true,
-                        fontSize: 40,
-                        fontWeight: 'bold',
-                    },
-                },
+                //emphasis: {
+                //    label: {
+                //        show: true,
+                 //       fontSize: 40,
+                 //       fontWeight: 'bold',
+                 //   },
+                //},
                 labelLine: {
                     show: false,
                 },
@@ -119,7 +127,7 @@ const setOptions = (resData : responseData) => {
     // 准备图表数据
     const seriresData = resData.group.map((series) => {
         return{
-            name:"新闻主题为：" + series.newsTheme + ",新闻标题长度为：" + series.titleLength + "新闻内容长度为：" + series.newsLength + "用户人群为：" + series.userID + "，点击量",
+            name:"主题：" + series.newsTheme + "；标题长度：" + series.titleLength + "；内容长度：" + series.newsLength + "；用户：" + series.userID ,
             //name: "点击量",
             type:'line',
             emphasis: {
@@ -177,6 +185,7 @@ const setOptions = (resData : responseData) => {
         },
         legend:{
             top:350,
+            itemWidth:40,   // 图例宽度
             //bottom:100,
         },
         xAxis: [
@@ -214,5 +223,18 @@ onUpdated(() => {
 
 </script>
 
-<style scoped></style>
+<style>
+.pieChartText{
+    position: absolute;
+    left: 0px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #dddddd;
+    bottom: 0px;
+    width: 100%; /* 如果需要，可以让文字宽度充满容器 */
+    text-align: center; /* 文字居中显示 */
+    margin-top: 0;
+    transform: translateY(-10px); /* 如果需要微调，可以修改这个值 */
+}
+</style>
 
