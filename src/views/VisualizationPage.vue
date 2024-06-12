@@ -1,5 +1,4 @@
 <template>
-    <h1>图表展示</h1>
     <div style="display: flex">
         <div id="main" style="width: 80%; height: 500px"></div>
         <div id="pieC" style="width: 20%; height: 500px"></div>
@@ -46,13 +45,29 @@ function getData() {
         console.log("获取新闻数据接口的响应为：", response1)
         console.log("response的类型为：",typeof response1)
         setOptions(response1)
+        drawPieChart(response1)
     }).catch(err => {
         console.log("在获取新闻数据使出错：" + err)
     })
 };
 
-const drawPieChart = () => {
+const drawPieChart = (resData : responseData) => {
+    console.log('222',resData);
     const pieChart = echarts.init(document.getElementById('pieC') as HTMLElement);
+    if(!resData || !resData.group){
+        console.log("resData或resData.group为null！出错默认结束操作")
+        return;
+    }
+    console.log("饼状图1："+resData.group)
+    // 准备饼图数据，这里假设每个组别的名称为 'Group' 加上组别的索引
+    const seriesData = resData.group.map((group, index) => {
+        return {
+            name: `Group ${index}`,
+            value: group.data.reduce((sum, dataItem) => sum + dataItem.hit, 0)
+        };
+    });
+    console.log("饼状图数据为：" + seriesData.map(item => item.value))
+
     const option = {
         tooltip: {
             trigger: 'item',
@@ -60,10 +75,11 @@ const drawPieChart = () => {
         legend: {
             top: '5%',
             left: 'center',
+            data:seriesData.map(item => item.name)
         },
         series: [
             {
-                name: 'Access From',
+                name: '新闻点击量',
                 type: 'pie',
                 radius: ['40%', '70%'],
                 avoidLabelOverlap: false,
@@ -86,13 +102,7 @@ const drawPieChart = () => {
                 labelLine: {
                     show: false,
                 },
-                data: [
-                    {value: 1048, name: 'Search Engine'},
-                    {value: 735, name: 'Direct'},
-                    {value: 580, name: 'Email'},
-                    {value: 484, name: 'Union Ads'},
-                    {value: 300, name: 'Video Ads'},
-                ],
+                data: seriesData,
             },
         ],
     };
@@ -109,10 +119,35 @@ const setOptions = (resData : responseData) => {
     // 准备图表数据
     const seriresData = resData.group.map((series) => {
         return{
-            name:"新闻主题为：" + series.newsTheme + ",新闻标题长度为：" + series.titleLength + "新闻内容长度为：" + series.newsLength + "用户人群为：" + series.userID,
+            name:"新闻主题为：" + series.newsTheme + ",新闻标题长度为：" + series.titleLength + "新闻内容长度为：" + series.newsLength + "用户人群为：" + series.userID + "，点击量",
+            //name: "点击量",
             type:'line',
             emphasis: {
                 focus: 'series'
+            },
+            barWidth: 30,    // 在这里设置柱状图的宽度
+            // 以下片段是调整图像颜色用的，可以在需要的时候使用
+            //itemStyle:{
+            //    color: {
+            //        type: 'linearGradient',
+            //        x: 0, // 渐变的起始点 x 坐标
+            //        y: 0, // 渐变的起始点 y 坐标
+            //        x2: 0, // 渐变的结束点 x 坐标
+             //       y2: 1, // 渐变的结束点 y 坐标
+             //       colorStops: [
+             //           {
+             //               offset: 0, // 0% 位置的颜色
+              //              color: 'rgba(255, 0, 0, 1)' // 开始颜色为红色
+              //          },
+              //          {
+               //             offset: 1, // 100% 位置的颜色
+               //             color: 'rgba(0, 255, 0, 1)' // 结束颜色为绿色
+               //         }
+               //     ]
+               // }
+            //},
+            lineStyle:{
+              width:3   // 在这里设置线条粗细
             },
             data:series.data.map(dataItem => [new
             Date(dataItem.time).getTime(),dataItem.hit])
@@ -121,60 +156,6 @@ const setOptions = (resData : responseData) => {
     console.log("seriesData为:",seriresData)
 
     const myChart = echarts.init(document.getElementById('main') as HTMLElement);
-    const data = [
-        ['2000-06-05', 116],
-        ['2000-06-06', 129],
-        ['2000-06-07', 135],
-        ['2000-06-08', 86],
-        ['2000-06-09', 73],
-        ['2000-06-10', 85],
-        ['2000-06-11', 73],
-        ['2000-06-12', 68],
-        ['2000-06-13', 92],
-        ['2000-06-14', 130],
-        ['2000-06-15', 245],
-        ['2000-06-16', 139],
-        ['2000-06-17', 115],
-        ['2000-06-18', 111],
-        ['2000-06-19', 309],
-        ['2000-06-20', 206],
-        ['2000-06-21', 137],
-        ['2000-06-22', 128],
-        ['2000-06-23', 85],
-        ['2000-06-24', 94],
-        ['2000-06-25', 71],
-        ['2000-06-26', 106],
-        ['2000-06-27', 84],
-        ['2000-06-28', 93],
-        ['2000-06-29', 85],
-        ['2000-06-30', 73],
-        ['2000-07-01', 83],
-        ['2000-07-02', 125],
-        ['2000-07-03', 107],
-        ['2000-07-04', 82],
-        ['2000-07-05', 44],
-        ['2000-07-06', 72],
-        ['2000-07-07', 106],
-        ['2000-07-08', 107],
-        ['2000-07-09', 66],
-        ['2000-07-10', 91],
-        ['2000-07-11', 92],
-        ['2000-07-12', 113],
-        ['2000-07-13', 107],
-        ['2000-07-14', 131],
-        ['2000-07-15', 111],
-        ['2000-07-16', 64],
-        ['2000-07-17', 69],
-        ['2000-07-18', 88],
-        ['2000-07-19', 77],
-        ['2000-07-20', 83],
-        ['2000-07-21', 111],
-        ['2000-07-22', 57],
-        ['2000-07-23', 55],
-        ['2000-07-24', 60],
-    ];
-    const dateList = data.map((item) => item[0]);
-    const valueList = data.map((item) => item[1]);
     option.value = {
         visualMap: [
             {
@@ -183,28 +164,26 @@ const setOptions = (resData : responseData) => {
                 seriesIndex: 0,
                 min: 0,
                 max: 400,
-                //top:50,
-                //right:10,
             },
         ],
         title: [
             {
                 left: 'center',
-                text: 'Gradient along the y axis',
+                text: '新闻点击量图表展示',
             },
         ],
         tooltip: {
             trigger: 'axis',
-
         },
         legend:{
-            bottom:10,
+            top:350,
+            //bottom:100,
         },
         xAxis: [
             {
                 //data: dateList,
                 type:'time',
-                data:resData.group.flat().map((item => item.data.map(dataItem => dataItem.time)))
+                data:resData.group.flat().map((item => item.data.map(dataItem => dataItem.time))),
             },
         ],
         yAxis: [{
@@ -212,7 +191,7 @@ const setOptions = (resData : responseData) => {
         }],
         grid: [
             {
-                bottom: '10%',
+                bottom: '40%',
             },
         ],
         toolbox: {
@@ -224,22 +203,9 @@ const setOptions = (resData : responseData) => {
             },
         },
         series:seriresData
-        //series: [
-        //    {
-                //type: 'line',
-                //showSymbol: false,
-                //data: valueList,
-
-        //    },
-        //],
     };
     myChart.setOption(option.value);
 };
-
-onMounted(() => {
-    //setOptions();
-    drawPieChart();
-});
 
 onUpdated(() => {
     console.log('***', props.inputData)
