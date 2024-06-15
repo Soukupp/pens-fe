@@ -44,10 +44,12 @@ const props = defineProps<{
 
 function getData() {
     // 调用接口，向后端传递参数、获取数据
-    axios.get("http://127.0.0.1:4523/m1/4594184-0-default/api/getNewsData", {
-        params: {
-            props
-        }
+    axios.post("http://127.0.0.1:4523/m1/4594184-0-default/api/getNewsData", {
+        data: {
+            start_time: props.inputData?.start_time,
+            end_time: props.inputData?.end_time,
+            group: props.inputData?.group,
+        } as Params
     }).then(response => {
         const response1 = response.data.response
         console.log("获取新闻数据接口的响应为：", response1)

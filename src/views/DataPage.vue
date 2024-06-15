@@ -4,7 +4,10 @@
             <h class="viewTitle tracking-in-expand">选择查询条件</h>
             <div ref="containerRef" style="margin-left: 20px">
                 <div v-for="(group, index1) in dataGroup" :key="index1" class="group-container">
-                    <span>{{ '对照组' + (index1 + 1) }}</span>
+                    <div class="title-container">
+                        <span>{{ '对照组' + (index1 + 1) }}</span>
+                        <button @click="removeGroup(index1)" class="delete-group-button">删除对照组</button>
+                    </div>
                     <div v-for="(value, index2) in group.sortValues" :key="index2" class="select-container">
                         <el-select v-model="group.sortValues[index2].type" placeholder="请选择指标"
                             @change="updateOptions(index1)">
@@ -12,10 +15,14 @@
                                 :label="option.text" :value="option.value"></el-option>
                         </el-select>
                         <el-select multiple v-model="group.sortValues[index2].value" placeholder="请选择值"
-                            :disabled="!group.sortValues[index2].type">
+                            :disabled="!group.sortValues[index2].type" allow-create filterable default-first-option
+                            :reserve-keyword="false">
                             <el-option v-for="option in getSecondOptions(group.sortValues[index2].type)" :key="option"
                                 :label="option" :value="option"></el-option>
                         </el-select>
+                        <button @click="removeSort(index1, index2)" class="delete-sort-button">
+                            <el-icon><Delete /></el-icon>
+                        </button>
                     </div>
                     <button @click="addSort(index1)" :disabled="group.sortValues.length >= 4" class="new-sort-button">+
                         新增指标</button>
@@ -27,7 +34,7 @@
         <div class="container">
             <el-date-picker v-model="dateData" type="datetimerange" range-separator="到" start-placeholder="开始日期"
                 end-placeholder="截止日期" />
-            <Visualization :input-data="params" ></Visualization>
+            <Visualization :input-data="params"></Visualization>
         </div>
         <div class="container">
             <NewsRecommend></NewsRecommend>
@@ -38,27 +45,28 @@
     </div>
 </template>
 
+
 <script setup lang="ts">
-import { ref, reactive, defineProps } from 'vue';
+import { ref, reactive } from 'vue';
 import Visualization from "./VisualizationPage.vue";
 import { DataGroup, Params } from '../assets/interface';
 import { ElMessage } from 'element-plus';
 import NewsRecommend from "./NewsRecommend.vue";
-import InterestQuery from "./InterestQuery.vue"
+import InterestQuery from "./InterestQuery.vue";
 
 // 初始选项数据
 const sortType = [
     { value: 'user_ID', text: '用户ID' },
     { value: 'news_length', text: '新闻内容长度' },
     { value: 'title_length', text: '新闻标题长度' },
-    { value: 'news_theme', text: '新闻类型' }
+    { value: 'news_theme', text: '新闻类型' },
+    { value: 'news_ID', text: '新闻ID' }
 ];
 // mock
 const optionData = [
-    { option: 'user_ID', data: [101, 202, 303] },
     { option: 'news_length', data: [1000, 2000, 3000] },
     { option: 'title_length', data: [10, 20, 30] },
-    { option: 'news_theme', data: ['sports', 'news', 'autos','foodanddrink','finance','music','lifestyle','weather','health','video','movies','tv','travel','entertainment','kids','europe','northamerica','adexpeirence'] }
+    { option: 'news_theme', data: ['sports', 'news', 'autos', 'foodanddrink', 'finance', 'music', 'lifestyle', 'weather', 'health', 'video', 'movies', 'tv', 'travel', 'entertainment', 'kids', 'europe', 'northamerica', 'adexpeirence'] }
 ];
 
 export interface SortValue {
@@ -78,7 +86,7 @@ const dataGroup = reactive<Array<Group>>([{ sortValues: [{ type: '', value: null
 
 /** 加工并生成传给组件的params数据 */
 const handleQueryEvent = () => {
-    if(dateData.value.length <2){
+    if (dateData.value.length < 2) {
         ElMessage({
             type: 'error',
             message: '请选择时间范围'
@@ -92,16 +100,16 @@ const handleQueryEvent = () => {
         group: []
     };
 
-    for(const item of dataGroup){
-        const temp= {} as DataGroup;
+    for (const item of dataGroup) {
+        const temp = {} as DataGroup;
         const sorts = item.sortValues;
-        for(const sort of sorts){
+        for (const sort of sorts) {
             switch (sort.type) {
                 case 'news_theme':
                     temp.news_theme = Array.from(sort.value);
                     break;
                 case 'title_length':
-                    temp.title_length =Array.from(sort.value);
+                    temp.title_length = Array.from(sort.value);
                     break;
                 case 'news_length':
                     temp.news_length = Array.from(sort.value);
@@ -109,6 +117,8 @@ const handleQueryEvent = () => {
                 case 'user_ID':
                     temp.user_id = Array.from(sort.value);
                     break;
+                case 'news_ID':
+                    temp.news_id = Array.from(sort.value);
                 default:
                     break;
             }
@@ -118,11 +128,14 @@ const handleQueryEvent = () => {
     params.value = inputData;
 }
 
-
-
 // 处理添加新对照组的函数
 const addGroup = () => {
     dataGroup.push({ sortValues: [{ type: '', value: null }] });
+};
+
+// 处理删除对照组的函数
+const removeGroup = (groupIndex: number) => {
+    dataGroup.splice(groupIndex, 1);
 };
 
 // 处理添加新指标的函数
@@ -130,6 +143,11 @@ const addSort = (groupIndex: number) => {
     if (dataGroup[groupIndex].sortValues.length < 4) {
         dataGroup[groupIndex].sortValues.push({ type: '', value: null });
     }
+};
+
+// 处理删除指标的函数
+const removeSort = (groupIndex: number, sortIndex: number) => {
+    dataGroup[groupIndex].sortValues.splice(sortIndex, 1);
 };
 
 // 获取可用的选项，排除已经选择的指标
@@ -152,7 +170,7 @@ const updateOptions = (groupIndex: number) => {
 </script>
 
 <style scoped>
-.card-container {
+<style scoped>.card-container {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -175,7 +193,9 @@ const updateOptions = (groupIndex: number) => {
     gap: 10px;
 }
 
-.new-sort-button {
+.new-sort-button,
+.delete-group-button,
+.delete-sort-button {
     border-radius: 10px;
     padding: 5px 10px;
     font-size: 11px;
@@ -184,15 +204,46 @@ const updateOptions = (groupIndex: number) => {
     border-width: 0;
 }
 
-.new-sort-button:hover {
+.new-sort-button:hover,
+.delete-group-button:hover,
+.delete-sort-button:hover {
     background-color: #d9d9d9;
     cursor: pointer;
     transition: 300ms;
 }
 
+.delete-group-button {
+    background-color: #f5c6c654;
+    /* 浅红色背景 */
+    color: #a94442;
+    /* 深红色文本 */
+}
+
+.delete-sort-button{
+    background-color: #f5c6c62c;
+    /* 浅红色背景 */
+    color: #a94442;
+    /* 深红色文本 */
+    display: flex;
+    align-items: center;
+}
+
+.delete-sort-button:hover{
+    background-color: #f5c6c687;
+}
+
+.delete-group-button:hover {
+    background-color: #f5c6c6c5;
+    /* 更深的红色背景 */
+    cursor: pointer;
+    transition: 300ms;
+}
+
+
 select {
     margin-bottom: 10px;
 }
+
 .viewTitle {
     background-image: linear-gradient(96.14deg,
     rgba(24, 103, 154, 0.69) 0%,
@@ -207,5 +258,11 @@ select {
 .tracking-in-expand {
     -webkit-animation: tracking-in-expand 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
     animation: tracking-in-expand 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+
+.title-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 30px;
 }
 </style>
