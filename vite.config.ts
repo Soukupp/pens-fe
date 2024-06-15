@@ -16,6 +16,15 @@ export default defineConfig({
 			resolvers: [ElementPlusResolver()]
 		})
 	],
+	server:{
+		proxy:{
+			'/api':{
+				target: 'http://localhost:8080',
+				changeOrigin: true,
+				rewrite: (path)=> path.replace(/^\/api/,'')
+			}
+		}
+	},
 	optimizeDeps: {
 		include: ['schart.js']
 	}
