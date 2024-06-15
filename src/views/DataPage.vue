@@ -11,7 +11,8 @@
                                 :label="option.text" :value="option.value"></el-option>
                         </el-select>
                         <el-select multiple v-model="group.sortValues[index2].value" placeholder="请选择值"
-                            :disabled="!group.sortValues[index2].type">
+                            :disabled="!group.sortValues[index2].type" allow-create filterable default-first-option
+                            :reserve-keyword="false">
                             <el-option v-for="option in getSecondOptions(group.sortValues[index2].type)" :key="option"
                                 :label="option" :value="option"></el-option>
                         </el-select>
@@ -26,7 +27,7 @@
         <div class="container">
             <el-date-picker v-model="dateData" type="datetimerange" range-separator="到" start-placeholder="开始日期"
                 end-placeholder="截止日期" />
-            <Visualization :input-data="params" ></Visualization>
+            <Visualization :input-data="params"></Visualization>
         </div>
         <div class="container">
             <NewsRecommend></NewsRecommend>
@@ -50,14 +51,14 @@ const sortType = [
     { value: 'user_ID', text: '用户ID' },
     { value: 'news_length', text: '新闻内容长度' },
     { value: 'title_length', text: '新闻标题长度' },
-    { value: 'news_theme', text: '新闻类型' }
+    { value: 'news_theme', text: '新闻类型' },
+    { value: 'news_ID', text: '新闻ID'}
 ];
 // mock
 const optionData = [
-    { option: 'user_ID', data: [101, 202, 303] },
     { option: 'news_length', data: [1000, 2000, 3000] },
     { option: 'title_length', data: [10, 20, 30] },
-    { option: 'news_theme', data: ['sports', 'news', 'autos','foodanddrink','finance','music','lifestyle','weather','health','video','movies','tv','travel','entertainment','kids','europe','northamerica','adexpeirence'] }
+    { option: 'news_theme', data: ['sports', 'news', 'autos', 'foodanddrink', 'finance', 'music', 'lifestyle', 'weather', 'health', 'video', 'movies', 'tv', 'travel', 'entertainment', 'kids', 'europe', 'northamerica', 'adexpeirence'] }
 ];
 
 export interface SortValue {
@@ -77,7 +78,7 @@ const dataGroup = reactive<Array<Group>>([{ sortValues: [{ type: '', value: null
 
 /** 加工并生成传给组件的params数据 */
 const handleQueryEvent = () => {
-    if(dateData.value.length <2){
+    if (dateData.value.length < 2) {
         ElMessage({
             type: 'error',
             message: '请选择时间范围'
@@ -91,16 +92,16 @@ const handleQueryEvent = () => {
         group: []
     };
 
-    for(const item of dataGroup){
-        const temp= {} as DataGroup;
+    for (const item of dataGroup) {
+        const temp = {} as DataGroup;
         const sorts = item.sortValues;
-        for(const sort of sorts){
+        for (const sort of sorts) {
             switch (sort.type) {
                 case 'news_theme':
                     temp.news_theme = Array.from(sort.value);
                     break;
                 case 'title_length':
-                    temp.title_length =Array.from(sort.value);
+                    temp.title_length = Array.from(sort.value);
                     break;
                 case 'news_length':
                     temp.news_length = Array.from(sort.value);
@@ -108,6 +109,8 @@ const handleQueryEvent = () => {
                 case 'user_ID':
                     temp.user_id = Array.from(sort.value);
                     break;
+                case 'news_ID':
+                    temp.news_id = Array.from(sort.value);
                 default:
                     break;
             }
@@ -116,8 +119,6 @@ const handleQueryEvent = () => {
     }
     params.value = inputData;
 }
-
-
 
 // 处理添加新对照组的函数
 const addGroup = () => {
