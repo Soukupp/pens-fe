@@ -1,7 +1,8 @@
 <template>
     <div class="card-container">
         <div class="container">
-            <div ref="containerRef">
+            <h class="viewTitle tracking-in-expand">选择查询条件</h>
+            <div ref="containerRef" style="margin-left: 20px">
                 <div v-for="(group, index1) in dataGroup" :key="index1" class="group-container">
                     <div class="title-container">
                         <span>{{ '对照组' + (index1 + 1) }}</span>
@@ -242,6 +243,21 @@ const updateOptions = (groupIndex: number) => {
 select {
     margin-bottom: 10px;
 }
+
+.viewTitle {
+    background-image: linear-gradient(96.14deg,
+    rgba(24, 103, 154, 0.69) 0%,
+    #0093bf 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: left;
+    margin-left: -5px;
+    font: 600 20px "Poppins", sans-serif;
+}
+
+.tracking-in-expand {
+    -webkit-animation: tracking-in-expand 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+    animation: tracking-in-expand 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
 
 .title-container{
     display: flex;

@@ -1,6 +1,6 @@
 <template>
     <div style="display: flex">
-        <div id="main" style="width: 80%; height: 500px"></div>
+        <div id="main" style="width: 80%; height: 500px;margin-right: 10px"></div>
         <!-- 添加一个容器用于饼状图 -->
         <div style="width: 20%; height: 400px; position: relative;">
             <!-- 饼状图将在这个容器内 -->
@@ -129,7 +129,7 @@ const setOptions = (resData : responseData) => {
     // 准备图表数据
     const seriresData = resData.group.map((series) => {
         return{
-            name:"主题：" + series.newsTheme + "；标题长度：" + series.titleLength + "；内容长度：" + series.newsLength + "；用户：" + series.userID ,
+            name:"主题：" + series.newsTheme + "；标题长度：0-" + series.titleLength + "；内容长度：0-" + series.newsLength + "；用户：" + series.userID ,
             //name: "点击量",
             type:'line',
             emphasis: {
