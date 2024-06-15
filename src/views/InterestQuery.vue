@@ -35,27 +35,7 @@ export default {
     data(){
         return{
             userID:'1',
-            tableData:[{
-                userID:'12',
-                timestamp:'2016-05-02',
-                mostPopCategory:'sports',
-                mostPopClicks:'20',
-            }, {
-                userID:'12',
-                timestamp:'2016-05-02',
-                mostPopCategory:'music',
-                mostPopClicks:'25',
-            }, {
-                userID:'12',
-                timestamp:'2016-05-02',
-                mostPopCategory:'finance',
-                mostPopClicks:'30',
-            }, {
-                userID:'12',
-                timestamp:'2016-05-02',
-                mostPopCategory:'news',
-                mostPopClicks:'15',
-            }]
+            tableData:[]
         }
     },
     mounted() {
@@ -72,6 +52,16 @@ export default {
             }) .then(response => {
                 const response1 =response.data.response;
                 console.log("用户兴趣查询接口返回：",response1)
+                // 更新tableData
+                this.tableData = response1.ClickList.map(item => ({
+                    userID: this.userID, // 假设每条记录的userID都是当前用户的ID
+                    timestamp: item.timestamp,
+                    mostPopCategory: item.mostPopCategory,
+                    mostPopClicks: item.mostPopClicks,
+                    categoryCounts: item.categoryCounts, // 添加这个属性，如果需要
+                }));
+            }).catch(err => {
+                console.log("在进行用户兴趣查询出错：" + err)
             })
         },
     }
