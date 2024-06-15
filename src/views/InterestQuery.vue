@@ -1,5 +1,5 @@
 <template>
-    <h style="margin-bottom: 10px">用户兴趣查询</h>
+    <h class="title">用户兴趣查询</h>
     <el-input class="search-box" v-model="userID" @keyup.enter="getInterestList"
               placeholder="请输入您想查询的用户的ID（请注意：用户ID格式为U+数字），按下回车进行查询" />
     <el-table
@@ -74,15 +74,22 @@ export default {
 </script>
 
 <style>
+.title{
+    margin-bottom: 10px;
+    font-size:25px;
+    color: #20a0ff;
+    font-family: 黑体;
+}
 .search-box {
     margin-top: 10px;
     margin-bottom: 10px;
-    width: 50%;
+    width: 75%;
     margin-left: auto;
     margin-right: auto;
+    font-size: 14px;
 }
 .el-table-container {
-    width: 100%; /* 或者其他宽度 */
+    width: 75%; /* 或者其他宽度 */
     max-width: 1200px; /* 可选，设置最大宽度 */
     margin-left: auto;
     margin-right: auto;
