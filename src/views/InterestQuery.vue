@@ -1,28 +1,35 @@
 <template>
     <h style="margin-bottom: 10px">用户兴趣查询</h>
-    <el-input class="search-box" v-model="userID"
-              placeholder="请输入您想查询的用户的ID" />
+    <el-input class="search-box" v-model="userID" @keyup.enter="getInterestList"
+              placeholder="请输入您想查询的用户的ID（请注意：用户ID格式为U+数字），按下回车进行查询" />
     <el-table
             :data="tableData"
-            style="width: 100%">
+            stripe
+            class="el-table-container"
+            >
         <el-table-column
                 prop="userID"
                 label="用户ID"
-                width="300">
+                width="180"
+                align="center">
         </el-table-column>
         <el-table-column
                 prop="timestamp"
                 label="时间"
-                width="300">
+                width="300"
+                align="center">
         </el-table-column>
         <el-table-column
                 prop="mostPopCategory"
                 label="最喜欢的新闻种类"
-                width="300">
+                width="300"
+                align="center">
         </el-table-column>
         <el-table-column
                 prop="mostPopClicks"
-                label="点击次数">
+                label="点击次数"
+                width="300"
+                align="center">
         </el-table-column>
     </el-table>
 </template>
@@ -34,19 +41,16 @@ export default {
     name: "InterestQuery",
     data(){
         return{
-            userID:'1',
+            userID:'',
             tableData:[]
         }
     },
-    mounted() {
-        console.log("13456",this.tableData);
-        this.getInterestList()
-    },
     methods:{
         getInterestList(){
+            console.log("userID为：",this.userID)
             // 获取用户兴趣列表
             axios.get('http://127.0.0.1:4523/m1/4594184-0-default/api/interestQuery',{
-                params:{
+                body:{
                     user_id:this.userID,
                 }
             }) .then(response => {
@@ -60,6 +64,7 @@ export default {
                     mostPopClicks: item.mostPopClicks,
                     categoryCounts: item.categoryCounts, // 添加这个属性，如果需要
                 }));
+                this.userID='';
             }).catch(err => {
                 console.log("在进行用户兴趣查询出错：" + err)
             })
@@ -73,5 +78,16 @@ export default {
     margin-top: 10px;
     margin-bottom: 10px;
     width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+.el-table-container {
+    width: 100%; /* 或者其他宽度 */
+    max-width: 1200px; /* 可选，设置最大宽度 */
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 </style>
