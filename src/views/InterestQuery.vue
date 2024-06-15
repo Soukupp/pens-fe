@@ -1,5 +1,5 @@
 <template>
-    <h class="title">用户兴趣查询</h>
+    <h class="viewTitle tracking-in-expand">用户兴趣查询</h>
     <el-input class="search-box" v-model="userID" @keyup.enter="getInterestList"
               placeholder="请输入您想查询的用户的ID（请注意：用户ID格式为U+数字），按下回车进行查询" />
     <el-table
@@ -74,11 +74,19 @@ export default {
 </script>
 
 <style>
-.title{
-    margin-bottom: 10px;
-    font-size:25px;
-    color: #20a0ff;
-    font-family: 黑体;
+.viewTitle {
+    background-image: linear-gradient(96.14deg,
+    rgb(24, 103, 154, 0.69) 0%,
+    #0093bf 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: left;
+    margin-left: -5px;
+    font: 600 20px "Poppins", sans-serif;
+}
+.tracking-in-expand {
+    -webkit-animation: tracking-in-expand 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+    animation: tracking-in-expand 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
 }
 .search-box {
     margin-top: 10px;

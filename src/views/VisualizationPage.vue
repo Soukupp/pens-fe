@@ -1,6 +1,6 @@
 <template>
     <div style="display: flex">
-        <div id="main" style="width: 80%; height: 500px"></div>
+        <div id="main" style="width: 80%; height: 500px;margin-right: 10px"></div>
         <!-- 添加一个容器用于饼状图 -->
         <div style="width: 20%; height: 400px; position: relative;">
             <!-- 饼状图将在这个容器内 -->
