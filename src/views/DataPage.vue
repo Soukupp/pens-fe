@@ -28,6 +28,12 @@
                 end-placeholder="截止日期" />
             <Visualization :input-data="params" ></Visualization>
         </div>
+        <div class="container">
+            <NewsRecommend></NewsRecommend>
+        </div>
+        <div class="container">
+            <InterestQuery></InterestQuery>
+        </div>
     </div>
 </template>
 
@@ -36,6 +42,8 @@ import { ref, reactive, defineProps } from 'vue';
 import Visualization from "./VisualizationPage.vue";
 import { DataGroup, Params } from '../assets/interface';
 import { ElMessage } from 'element-plus';
+import NewsRecommend from "./NewsRecommend.vue";
+import InterestQuery from "./InterestQuery.vue"
 
 // 初始选项数据
 const sortType = [
@@ -49,7 +57,7 @@ const optionData = [
     { option: 'user_ID', data: [101, 202, 303] },
     { option: 'news_length', data: [1000, 2000, 3000] },
     { option: 'title_length', data: [10, 20, 30] },
-    { option: 'news_theme', data: ['体育类', '政治类', '生活类'] }
+    { option: 'news_theme', data: ['sports', 'news', 'autos','foodanddrink','finance','music','lifestyle','weather','health','video','movies','tv','travel','entertainment','kids','europe','northamerica','adexpeirence'] }
 ];
 
 export interface SortValue {
