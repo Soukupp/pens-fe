@@ -1,12 +1,6 @@
 <template>
     <h style="margin-bottom: 10px">用户兴趣查询</h>
-    <el-form :model="form" :rules="rules" ref="formRef">
-        <el-form-item label="自定义验证" prop ="userID">
-            <el-input  v-model="form.userID" placeholder="请输入用户ID">
-            </el-input>
-        </el-form-item>
-    </el-form>
-    <el-input class="search-box" v-model="userID" :validate-event="validateEvent"
+    <el-input class="search-box" v-model="userID"
               placeholder="请输入您想查询的用户的ID" />
     <el-table
             :data="tableData"
@@ -34,29 +28,13 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
     name: "InterestQuery",
     data(){
         return{
-            form:{
-                userID:'',
-            },
-            rules:{
-                userID:[
-                    {
-                        validator:(rule,value,callback) => {
-                            if(value && !value.startWith('U')){
-                                callback(new error('用户ID以U开头！'));
-                            }else{
-                                callback();
-                            }
-                        },
-                        trigger:'blur'
-                    }
-                ]
-            },
-            formRef:null,
-            validateEvent: 'input', // 这里设置为 'input' 表示输入时触发验证
+            userID:'1',
             tableData:[{
                 userID:'12',
                 timestamp:'2016-05-02',
@@ -82,17 +60,19 @@ export default {
     },
     mounted() {
         console.log("13456",this.tableData);
-        this.formRef = this.$refs.formRef;
+        this.getInterestList()
     },
     methods:{
-        submitForm(){
-            this.formRef.validate((valid) => {
-                if (valid) {
-                    alert('表单验证成功!');
-                } else {
-                    alert('表单验证失败!');
+        getInterestList(){
+            // 获取用户兴趣列表
+            axios.get('http://127.0.0.1:4523/m1/4594184-0-default/api/interestQuery',{
+                params:{
+                    user_id:this.userID,
                 }
-            });
+            }) .then(response => {
+                const response1 =response.data.response;
+                console.log("用户兴趣查询接口返回：",response1)
+            })
         },
     }
 }
