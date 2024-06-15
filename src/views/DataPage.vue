@@ -170,7 +170,8 @@ const updateOptions = (groupIndex: number) => {
 </script>
 
 <style scoped>
-<style scoped>.card-container {
+
+.card-container {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -258,6 +259,7 @@ select {
 .tracking-in-expand {
     -webkit-animation: tracking-in-expand 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
     animation: tracking-in-expand 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+}
 
 .title-container{
     display: flex;
@@ -265,4 +267,5 @@ select {
     align-items: center;
     gap: 30px;
 }
+
 </style>

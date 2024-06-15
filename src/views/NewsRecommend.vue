@@ -8,7 +8,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .viewTitle {
     background-image: linear-gradient(96.14deg,
     rgba(24, 103, 154, 0.69) 0%,
