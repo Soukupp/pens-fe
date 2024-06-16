@@ -49,15 +49,15 @@ export default {
         getInterestList(){
             console.log("userID为：",this.userID)
             // 获取用户兴趣列表
-            axios.get('https://mock.apipark.cn/m1/4594184-0-default/api/interestQuery',{
-                body:{
+            axios.get('http://localhost:81/api/interestQuery',{
+                params:{
                     user_id:this.userID,
                 }
             }) .then(response => {
                 const response1 =response.data.response;
                 console.log("用户兴趣查询接口返回：",response1)
                 // 更新tableData
-                this.tableData = response1.ClickList.map(item => ({
+                this.tableData = response1.clickList.map(item => ({
                     userID: this.userID, // 假设每条记录的userID都是当前用户的ID
                     timestamp: item.timestamp,
                     mostPopCategory: item.mostPopCategory,

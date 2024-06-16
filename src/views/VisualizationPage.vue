@@ -66,19 +66,21 @@ onMounted(() => {
 
 function getData() {
     // 调用接口，向后端传递参数、获取数据
-    axios.post("https://mock.apipark.cn/m1/4594184-0-default/api/getNewsData", {
+    axios.post("http://localhost:81/api/intgr_query", {
         data: {
             start_time: props.inputData?.start_time,
             end_time: props.inputData?.end_time,
-            group: props.inputData?.group,
+            group: props.inputData?.group
         } as Params
     }).then(response => {
+        console.log(props.inputData)
         const response1 = response.data.response
         console.log("获取新闻数据接口的响应为：", response1)
         console.log("response的类型为：",typeof response1)
         setOptions(response1)
         drawPieChart(response1)
     }).catch(err => {
+        console.log('Group'+props.inputData?.group)
         console.log("在获取新闻数据使出错：" + err)
     })
 };

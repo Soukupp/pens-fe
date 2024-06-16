@@ -5,11 +5,11 @@
         <el-button @click="handleClickEvent" placeholder="请输入您想查询的用户的ID（请注意：用户ID格式为U+数字），按下回车进行查询">查询</el-button>
     </div>
     <el-table :data="formData" :header-cell-style="{ 'text-align': 'center' } ">
-        <el-table-column prop="newsId" label="新闻ID" width="180" align="center" />
-        <el-table-column prop="newsTitle" label="新闻标题" width="180" align="center" />
-        <el-table-column prop="newsTheme" label="新闻主题" align="center" />
-        <el-table-column prop="newsLength" label="新闻长度" align="center" />
-        <el-table-column prop="description" label="新闻简介" />
+        <el-table-column prop="newsID" label="新闻ID" width="180" align="center" />
+        <el-table-column prop="headlineLen" label="新闻标题" width="180" align="center" />
+        <el-table-column prop="category" label="新闻主题" align="center" />
+        <el-table-column prop="newsBodyLen" label="新闻长度" align="center" />
+        <el-table-column prop="headlineLen" label="新闻简介" />
     </el-table>
 </template>
 
@@ -23,13 +23,14 @@ const userID = ref('');
 const formData = ref(null);
 
 const handleClickEvent = () => {
-    axios.get('https://mock.apipark.cn/m1/4594184-4243668-default/api/recommendNews', {
+    axios.get('http://localhost:81/api/recommendNews', {
         params: {
             user_id: userID.value,
         }
     }).then((res) => {
         const data = res.data;
         formData.value = data.response.recommendList;
+        console.log(formData.value)
     }).catch((err) => {
         ElMessage({
             type: 'error',
