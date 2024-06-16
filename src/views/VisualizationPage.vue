@@ -2,7 +2,7 @@
     <div style="display: flex">
         <div id="main" style="width: 80%; height: 500px;margin-right: 10px"></div>
         <!-- 添加一个容器用于饼状图 -->
-        <div style="width: 20%; height: 400px; position: relative;">
+        <div style="width: 20%; height: 400px; position: relative;margin-left: 10px">
             <!-- 饼状图将在这个容器内 -->
             <div id="pieC" style="height: 400px"></div>
             <!-- 添加文本在饼状图下方 -->
@@ -23,13 +23,30 @@ const option = ref({});
 interface responseData{
     group: [
         {
-            newsTheme: 'all',
-            titleLength: 'all',
-            newsLength: 'all',
-            userID: 'all',
+            newsTheme: Array<string>,
+            titleLength: Array<number>,
+            newsLength: Array<number>,
+            userID: Array<string>,
             data: [
                 {
-                    time: '2019-6-13--2019-7-3',
+                    time: string,
+                    hit: number,
+                },
+            ],
+        },
+    ],
+};
+
+const firstDraw : responseData ={
+    group: [
+        {
+            newsTheme: ['all'],
+            titleLength: [0],
+            newsLength:[0],
+            userID: ['all'],
+            data: [
+                {
+                    time: 'null',
                     hit: 0,
                 },
             ],
@@ -41,6 +58,11 @@ interface responseData{
 const props = defineProps<{
     inputData: Params | undefined
 }>();
+
+onMounted(() => {
+    drawPieChart(firstDraw);
+    setOptions(firstDraw)
+})
 
 function getData() {
     // 调用接口，向后端传递参数、获取数据
@@ -72,7 +94,7 @@ const drawPieChart = (resData : responseData) => {
     // 准备饼图数据，这里假设每个组别的名称为 'Group' 加上组别的索引
     const seriesData = resData.group.map((group, index) => {
         return {
-            name: `Group ${index}`,
+            name: `Group ${index+1}`,
             value: group.data.reduce((sum, dataItem) => sum + dataItem.hit, 0)
         };
     });
@@ -87,6 +109,13 @@ const drawPieChart = (resData : responseData) => {
             left: 'center',
             data:seriesData.map(item => item.name)
         },
+        title: [
+            {
+                left: 'center',
+                text: '各对照组点击量统计',
+                color: 'rgba(0, 0, 255, 0.5)',
+            },
+        ],
         series: [
             {
                 name: '新闻点击量',
@@ -179,7 +208,7 @@ const setOptions = (resData : responseData) => {
         title: [
             {
                 left: 'center',
-                text: '新闻点击量图表展示',
+                text: '新闻点击量图像展示',
             },
         ],
         tooltip: {

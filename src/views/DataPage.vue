@@ -32,8 +32,9 @@
             </div>
         </div>
         <div class="container">
+            <h class="viewTitle tracking-in-expand">查询结果展示</h>
             <el-date-picker v-model="dateData" type="datetimerange" :disabled-date="disabledDate" range-separator="到" start-placeholder="开始日期"
-                end-placeholder="截止日期"/>
+                end-placeholder="截止日期" style="margin-top: 10px"/>
             <Visualization :input-data="params"></Visualization>
         </div>
         <div class="container">

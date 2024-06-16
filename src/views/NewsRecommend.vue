@@ -1,7 +1,7 @@
 <template>
     <h class="viewTitle tracking-in-expand">新闻推荐</h>
     <div class="query-container"> 
-        <el-input v-model="userID" @keyup.enter="handleClickEvent"></el-input>
+        <el-input v-model="userID" @keyup.enter="handleClickEvent" placeholder="请输入您想查询的用户的ID（请注意：用户ID格式为U+数字），按下回车进行查询"></el-input>
         <el-button @click="handleClickEvent" placeholder="请输入您想查询的用户的ID（请注意：用户ID格式为U+数字），按下回车进行查询">查询</el-button>
     </div>
     <el-table :data="formData" :header-cell-style="{ 'text-align': 'center' } ">
