@@ -49,7 +49,7 @@ export default {
         getInterestList(){
             console.log("userID为：",this.userID)
             // 获取用户兴趣列表
-            axios.get('https://mock.apipark.cn/m1/4594184-4243668-default/api/interestQuery',{
+            axios.get('https://mock.apipark.cn/m1/4594184-0-default/api/interestQuery',{
                 body:{
                     user_id:this.userID,
                 }

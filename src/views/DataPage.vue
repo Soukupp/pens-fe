@@ -32,8 +32,8 @@
             </div>
         </div>
         <div class="container">
-            <el-date-picker v-model="dateData" type="datetimerange" range-separator="到" start-placeholder="开始日期"
-                end-placeholder="截止日期" />
+            <el-date-picker v-model="dateData" type="datetimerange" :disabled-date="disabledDate" range-separator="到" start-placeholder="开始日期"
+                end-placeholder="截止日期"/>
             <Visualization :input-data="params"></Visualization>
         </div>
         <div class="container">
@@ -47,7 +47,7 @@
 
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import Visualization from "./VisualizationPage.vue";
 import { DataGroup, Params } from '../assets/interface';
 import { ElMessage } from 'element-plus';
@@ -64,8 +64,8 @@ const sortType = [
 ];
 // mock
 const optionData = [
-    { option: 'news_length', data: [1000, 2000, 3000] },
-    { option: 'title_length', data: [10, 20, 30] },
+    { option: 'news_length', data: [100,500,1000,1500,2000,10000] },
+    { option: 'title_length', data: [6,7,8,9,10,11,12,13,14,15,50] },
     { option: 'news_theme', data: ['sports', 'news', 'autos', 'foodanddrink', 'finance', 'music', 'lifestyle', 'weather', 'health', 'video', 'movies', 'tv', 'travel', 'entertainment', 'kids', 'europe', 'northamerica', 'adexpeirence'] }
 ];
 
@@ -78,8 +78,23 @@ interface Group {
     sortValues: SortValue[];
 }
 
-const dateData = ref<Array<Date>>([]);
+const dateData = ref([
+    new Date(2019, 5, 13), // 2019年6月13日作为默认开始日期
+    new Date(2019, 6, 3)   // 2019年7月3日作为默认结束日期
+]);
+
 const params = ref<Params>();
+
+const disabledDate = computed(() => {
+    return(date: { getTime: () => number; }) => {
+        // 设置允许选择的日期范围
+        const minDate = new Date(2019, 5, 13); // 2019-06-13
+        const maxDate = new Date(2019, 6, 3); // 2019-07-03
+
+        // 如果日期不在允许的范围内，则返回true，禁用选择
+        return date.getTime() < minDate.getTime() || date.getTime() > maxDate.getTime();
+    }
+})
 
 // model，负责绑定页面选择器
 const dataGroup = reactive<Array<Group>>([{ sortValues: [{ type: '', value: null }] }]);

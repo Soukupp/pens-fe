@@ -44,7 +44,7 @@ const props = defineProps<{
 
 function getData() {
     // 调用接口，向后端传递参数、获取数据
-    axios.post("http://127.0.0.1:4523/m1/4594184-0-default/api/getNewsData", {
+    axios.post("https://mock.apipark.cn/m1/4594184-0-default/api/getNewsData", {
         data: {
             start_time: props.inputData?.start_time,
             end_time: props.inputData?.end_time,
