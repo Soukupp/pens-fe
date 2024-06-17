@@ -49,7 +49,7 @@ export default {
         getInterestList(){
             console.log("userID为：",this.userID)
             // 获取用户兴趣列表
-            axios.get('http://localhost:81/api/interestQuery',{
+            axios.get('http://localhost:8001/api/interestQuery',{
                 params:{
                     user_id:this.userID,
                 }

@@ -9,7 +9,7 @@
         <el-table-column prop="headlineLen" label="新闻标题" width="180" align="center" />
         <el-table-column prop="category" label="新闻主题" align="center" />
         <el-table-column prop="newsBodyLen" label="新闻长度" align="center" />
-        <el-table-column prop="headlineLen" label="新闻简介" />
+        
     </el-table>
 </template>
 
@@ -23,7 +23,7 @@ const userID = ref('');
 const formData = ref(null);
 
 const handleClickEvent = () => {
-    axios.get('http://localhost:81/api/recommendNews', {
+    axios.get('http://localhost:8001/api/recommendNews', {
         params: {
             user_id: userID.value,
         }

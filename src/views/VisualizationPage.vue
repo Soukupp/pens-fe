@@ -17,10 +17,10 @@
 import * as echarts from 'echarts';
 import { ref, onMounted, defineProps, onUpdated } from 'vue';
 import axios, { AxiosResponse } from 'axios';
-import {Params} from '../assets/interface';
+import { Params } from '../assets/interface';
 
 const option = ref({});
-interface responseData{
+interface responseData {
     group: [
         {
             newsTheme: Array<string>,
@@ -37,12 +37,12 @@ interface responseData{
     ],
 };
 
-const firstDraw : responseData ={
+const firstDraw: responseData = {
     group: [
         {
             newsTheme: ['all'],
             titleLength: [0],
-            newsLength:[0],
+            newsLength: [0],
             userID: ['all'],
             data: [
                 {
@@ -66,7 +66,7 @@ onMounted(() => {
 
 function getData() {
     // 调用接口，向后端传递参数、获取数据
-    axios.post("http://localhost:81/api/intgr_query", {
+    axios.post("http://localhost:8001/api/intgr_query", {
         data: {
             start_time: props.inputData?.start_time,
             end_time: props.inputData?.end_time,
@@ -76,27 +76,27 @@ function getData() {
         console.log(props.inputData)
         const response1 = response.data.response
         console.log("获取新闻数据接口的响应为：", response1)
-        console.log("response的类型为：",typeof response1)
+        console.log("response的类型为：", typeof response1)
         setOptions(response1)
         drawPieChart(response1)
     }).catch(err => {
-        console.log('Group'+props.inputData?.group)
+        console.log('Group' + props.inputData?.group)
         console.log("在获取新闻数据使出错：" + err)
     })
 };
 
-const drawPieChart = (resData : responseData) => {
-    console.log('222',resData);
+const drawPieChart = (resData: responseData) => {
+    console.log('222', resData);
     const pieChart = echarts.init(document.getElementById('pieC') as HTMLElement);
-    if(!resData || !resData.group){
+    if (!resData || !resData.group) {
         console.log("resData或resData.group为null！出错默认结束操作")
         return;
     }
-    console.log("饼状图1："+resData.group)
+    console.log("饼状图1：" + resData.group)
     // 准备饼图数据，这里假设每个组别的名称为 'Group' 加上组别的索引
     const seriesData = resData.group.map((group, index) => {
         return {
-            name: `Group ${index+1}`,
+            name: `Group ${index + 1}`,
             value: group.data.reduce((sum, dataItem) => sum + dataItem.hit, 0)
         };
     });
@@ -109,7 +109,7 @@ const drawPieChart = (resData : responseData) => {
         legend: {
             top: '5%',
             left: 'center',
-            data:seriesData.map(item => item.name)
+            data: seriesData.map(item => item.name)
         },
         title: [
             {
@@ -136,9 +136,9 @@ const drawPieChart = (resData : responseData) => {
                 //emphasis: {
                 //    label: {
                 //        show: true,
-                 //       fontSize: 40,
-                 //       fontWeight: 'bold',
-                 //   },
+                //       fontSize: 40,
+                //       fontWeight: 'bold',
+                //   },
                 //},
                 labelLine: {
                     show: false,
@@ -150,19 +150,22 @@ const drawPieChart = (resData : responseData) => {
     pieChart.setOption(option);
 };
 
-const setOptions = (resData : responseData) => {
-    console.log('111',resData);
-    if(!resData || !resData.group){
+const setOptions = (resData: responseData) => {
+    console.log('111', resData);
+    if (!resData || !resData.group) {
         console.log("resData或resData.group为null！出错默认结束操作")
         return;
     }
 
     // 准备图表数据
     const seriresData = resData.group.map((series) => {
-        return{
-            name:"主题：" + series.newsTheme + "；标题长度：0-" + series.titleLength + "；内容长度：0-" + series.newsLength + "；用户：" + series.userID ,
-            //name: "点击量",
-            type:'line',
+        const theme = series.newsTheme ? "主题：" + series.newsTheme + "；" : '';
+        const tlength = series.titleLength ? "标题长度：0-" + series.titleLength + "；" : "";
+        const nlength = series.newsLength ? "内容长度：0-" + series.newsLength + "；" : "";
+        const id = series.userID ? "用户：" + series.userID : "";
+        return {
+            name: theme + tlength + nlength + id,
+            type: 'line',
             emphasis: {
                 focus: 'series'
             },
@@ -174,27 +177,27 @@ const setOptions = (resData : responseData) => {
             //        x: 0, // 渐变的起始点 x 坐标
             //        y: 0, // 渐变的起始点 y 坐标
             //        x2: 0, // 渐变的结束点 x 坐标
-             //       y2: 1, // 渐变的结束点 y 坐标
-             //       colorStops: [
-             //           {
-             //               offset: 0, // 0% 位置的颜色
-              //              color: 'rgba(255, 0, 0, 1)' // 开始颜色为红色
-              //          },
-              //          {
-               //             offset: 1, // 100% 位置的颜色
-               //             color: 'rgba(0, 255, 0, 1)' // 结束颜色为绿色
-               //         }
-               //     ]
-               // }
+            //       y2: 1, // 渐变的结束点 y 坐标
+            //       colorStops: [
+            //           {
+            //               offset: 0, // 0% 位置的颜色
+            //              color: 'rgba(255, 0, 0, 1)' // 开始颜色为红色
+            //          },
+            //          {
+            //             offset: 1, // 100% 位置的颜色
+            //             color: 'rgba(0, 255, 0, 1)' // 结束颜色为绿色
+            //         }
+            //     ]
+            // }
             //},
-            lineStyle:{
-              width:3   // 在这里设置线条粗细
+            lineStyle: {
+                width: 3   // 在这里设置线条粗细
             },
-            data:series.data.map(dataItem => [new
-            Date(dataItem.time).getTime(),dataItem.hit])
+            data: series.data.map(dataItem => [new
+                Date(dataItem.time).getTime(), dataItem.hit])
         };
     });
-    console.log("seriesData为:",seriresData)
+    console.log("seriesData为:", seriresData)
 
     const myChart = echarts.init(document.getElementById('main') as HTMLElement);
     option.value = {
@@ -216,20 +219,20 @@ const setOptions = (resData : responseData) => {
         tooltip: {
             trigger: 'axis',
         },
-        legend:{
-            top:350,
-            itemWidth:40,   // 图例宽度
+        legend: {
+            top: 350,
+            itemWidth: 40,   // 图例宽度
             //bottom:100,
         },
         xAxis: [
             {
                 //data: dateList,
-                type:'time',
-                data:resData.group.flat().map((item => item.data.map(dataItem => dataItem.time))),
+                type: 'time',
+                data: resData.group.flat().map((item => item.data.map(dataItem => dataItem.time))),
             },
         ],
         yAxis: [{
-            type:'value'
+            type: 'value'
         }],
         grid: [
             {
@@ -244,7 +247,7 @@ const setOptions = (resData : responseData) => {
                 },
             },
         },
-        series:seriresData
+        series: seriresData
     };
     myChart.setOption(option.value);
 };
@@ -257,17 +260,20 @@ onUpdated(() => {
 </script>
 
 <style>
-.pieChartText{
+.pieChartText {
     position: absolute;
     left: 0px;
     font-size: 14px;
     font-weight: bold;
     color: #dddddd;
     bottom: 0px;
-    width: 100%; /* 如果需要，可以让文字宽度充满容器 */
-    text-align: center; /* 文字居中显示 */
+    width: 100%;
+    /* 如果需要，可以让文字宽度充满容器 */
+    text-align: center;
+    /* 文字居中显示 */
     margin-top: 0;
-    transform: translateY(-10px); /* 如果需要微调，可以修改这个值 */
+    transform: translateY(-10px);
+    /* 如果需要微调，可以修改这个值 */
 }
 </style>
 
